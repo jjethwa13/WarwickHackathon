@@ -37,10 +37,11 @@ class Market():
         self.riskless_asset = Asset(rf=self.rf)
         return self.riskless_asset
 
-    '''
-    Creates covariance matrix for the assets in the market
-    '''
-    def setCovarianceMatrix(self):   
+    
+    def setCovarianceMatrix(self): 
+        '''
+        Creates covariance matrix for the assets in the market
+        '''  
         def makeSymmetric(arr):
             return arr + arr.T - np.diag(arr.diagonal())
 
