@@ -23,7 +23,7 @@ class Asset(object):
         self.setDistribution(lambda x: int(x >= rf))
         self.price = price
         self.properties = {}
-        self.accuracy = 0.0001
+        self.accuracy = 0.01
         
     '''
     Getters
@@ -70,7 +70,7 @@ class Asset(object):
     def setRiskFreeRate(self, rf):
         self.rf = rf
 
-    def simulate(self, n=1, accuracy=-1):
+    def simulate(self, n=1, accuracy=-1, p=-1):
         '''
         Simulates the returns for the asset
         Will also overwrite the accuracy of the asset's simulation
@@ -78,7 +78,8 @@ class Asset(object):
         Parameters :
         n : int (number of datapoints you want to simulate, note that is n=1 the datapoint is returned as a scalar)
         accuracy : float (Determines the step-size when going through the cumulative distribution, a smaller accuracy may decrease performance)
-    
+        p : float (Number that determines the state of the asset, will be randomly generated if not set)
+        
         Returns : 
         simulated data : scalar (if n = 1), list (if n > 1)
         
@@ -91,10 +92,10 @@ class Asset(object):
         for _ in range(n):
 
             x0 = 0
-
-            p = random.random()
-            while p == 0:
+            if p == -1:
                 p = random.random()
+                while p == 0:
+                    p = random.random()
 
             i = 1
             if p <= self.distribution(x0):      ## We start from 0, i controls whether we decrease x0 or increase
@@ -163,7 +164,7 @@ class Asset(object):
         
         return result
     
-    def getCovar(self, Y, n=10000):
+    def getCovar(self, Y, n=1000):
         
         '''
         Estimates the covariance of the asset with another asset X, estimate is
@@ -171,36 +172,36 @@ class Asset(object):
         
         Note n must be large
         '''
-        
-        data_X = self.simulate(n=n)
-        data_Y = self.simulate(n=n)
-        
+           
         result = 0
-        for i in range(len(data_X)):
-            x = data_X[i]
-            y = data_Y[i]
+        for i in range(n):
+            p = random.random()
+            while p == 0:
+                p = random.random()
+            x = self.simulate(p=p)
+            y = Y.simulate(p=p)
             result += (x - self.getExpectation())*(y - Y.getExpectation())
         
         return (result / (n-1))
         
         
-#from scipy.stats import norm
-#
-#    
-#def Test(x):
-#    return norm.cdf(x)
-#    
-#
-#import matplotlib.pyplot as plt
-#
-#X = Asset()
-#X.setDistribution(Test)
-#
-#
+from scipy.stats import norm
+
+    
+def Test(x):
+    return norm.cdf(x)
+    
+
+import matplotlib.pyplot as plt
+
+X = Asset()
+X.setDistribution(Test)
+
+
 #print(X.getExpectation())
 #print(X.getStd())
 
-#data = X.simulate(n=10000)
+data = X.simulate(n=1)
 #plt.figure(figsize=(20, 10))
 #plt.hist(data, bins=50)
 #plt.grid(True)
