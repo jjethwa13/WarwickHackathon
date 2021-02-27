@@ -148,31 +148,47 @@ class Asset(object):
         while not check:
             
             item = self.distribution(self.accuracy*(x+1)) - self.distribution(self.accuracy*x)
-            item += (-1 ** k)*(self.distribution(self.accuracy*(1-x)) - self.distribution(-1*self.accuracy*x))
+            item += ((-1)**k)*(self.distribution(self.accuracy*(1-x)) - self.distribution(-1*self.accuracy*x))
             item *= (self.accuracy*x)**k
             result += item
             
             x += 1
             
-            check_value = np.abs(self.distribution(self.accuracy*x) + self.distribution(-1*self.accuracy*x) - 1)
-            if check_value < 0.0001:
+            check_value_1 = self.distribution(self.accuracy*x)
+            check_value_2 = self.distribution(-1*self.accuracy*x)
+            if 1 - check_value_1 < 0.000001 and check_value_2 < 0.000001:
                 check = True
         
         self.properties[str(k)] = result
         
         return result
-            
+    
+    def getCovar(self, Y, n=10000):
+        
+        '''
+        Estimates the covariance of the asset with another asset X, estimate is
+        dependant on the number of simulations n
+        
+        Note n must be large
+        '''
+        
+        data_X = self.simulate(n=n)
+        data_Y = self.simulate(n=n)
+        
+        result = 0
+        for i in range(len(data_X)):
+            x = data_X[i]
+            y = data_Y[i]
+            result += (x - self.getExpectation())*(y - Y.getExpectation())
+        
+        return (result / (n-1))
         
         
-        
-        
-        
-        
-
+from scipy.stats import norm
 
     
 def Test(x):
-
+    return norm.cdf(x)
     
 
 import matplotlib.pyplot as plt
@@ -180,14 +196,15 @@ import matplotlib.pyplot as plt
 X = Asset()
 X.setDistribution(Test)
 
+
 print(X.getExpectation())
 print(X.getStd())
 
-data = X.simulate(n=10000)
-plt.figure(figsize=(20, 10))
-plt.hist(data, bins=50)
-plt.grid(True)
-plt.plot()
+#data = X.simulate(n=10000)
+#plt.figure(figsize=(20, 10))
+#plt.hist(data, bins=50)
+#plt.grid(True)
+#plt.plot()
 
 
 
