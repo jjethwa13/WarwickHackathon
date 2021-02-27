@@ -89,4 +89,4 @@ class Market():
         calcConstants()
         ones = np.ones(len(self.assets))
         a = np.matmul(self.inv_covariance_matrix,self.expected_returns-self.rf*np.ones(len(self.expected_returns)))
-        return ((mean-self.rf)**2)*a/(A*self.rf**2-2*B*self.rf+C) #Variance
+        return ((mean-self.rf)**2)/(A*self.rf**2-2*B*self.rf+C) #Variance
