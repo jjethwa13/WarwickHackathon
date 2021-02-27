@@ -66,7 +66,7 @@ class Market():
         Calculates the Markowitz tangency portfolio
         '''
         calcConstants()
-        
+        ones = np.ones(len(self.assets))
         a = np.matmul(self.inv_covariance_matrix,self.expected_returns-self.rf*np.ones(len(self.expected_returns)))
         self.tangency_portfolio = a/(self.B-self.rf*self.A)
         return self.tangency_portfolio
@@ -78,11 +78,15 @@ class Market():
         if (self.B == None):
             ones = np.ones(len(self.assets))
             self.B = np.matmul(ones,np.matmul(self.inv_covariance_matrix,self.expected_returns))
+        if (self.C == None):
+            self.C = np.matmul(self.expected_returns,np.matmul(self.inv_covariance_matrix,self.expected_returns))
         return 0
 
     def efficientFrontier(self,mean):
         '''
-        Takes mean as argument and returns Variance
+        Takes mean as argument and returns variance
         '''
         calcConstants()
-        variance = (mean-self.rf)**2/()
+        ones = np.ones(len(self.assets))
+        a = np.matmul(self.inv_covariance_matrix,self.expected_returns-self.rf*np.ones(len(self.expected_returns)))
+        return ((mean-self.rf)**2)*a/(A*self.rf**2-2*B*self.rf+C) #Variance
