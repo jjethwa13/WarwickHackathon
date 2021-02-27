@@ -1,4 +1,7 @@
 import numpy as np
+import matplotlib.pyplot as plt
+import Asset
+
 class Market():
     def __init__(self, assets, rf):
         '''
@@ -26,7 +29,7 @@ class Market():
         return self.assets
 
     def getCovarianceMatrix(self):
-        return self.getCovarianceMatrix
+        return self.covariance_matrix
 
     
     def createRisklessAsset(self):
@@ -36,16 +39,17 @@ class Market():
         self.riskless_asset = Asset(rf=self.rf)
         return self.riskless_asset
 
-    '''
-    Creates covariance matrix for the assets in the market
-    '''
-    def setCovarianceMatrix(self):   
+    
+    def setCovarianceMatrix(self): 
+        '''
+        Creates covariance matrix for the assets in the market
+        '''  
         def makeSymmetric(arr):
             return arr + arr.T - np.diag(arr.diagonal())
 
         for i in range(len(self.assets)):
             for j in range(i):
-                self.covariance[j][i]=self.assets[i].getCovariance(self.assets[j])
+                self.covariance[j][i]=self.assets[i].getCovar(self.assets[j])
         return self.covariance_matrix
     
     def setInvCovarianceMatrix(self):
@@ -72,6 +76,9 @@ class Market():
         return self.tangency_portfolio
     
     def calcConstants(self):
+        '''
+        Calculates constants that are used within various portfolio calculations
+        '''
         if (self.A==None):
             ones = np.ones(len(self.assets))
             self.A = np.matmul(ones,np.matmul(self.inv_covariance_matrix,ones))
@@ -90,3 +97,13 @@ class Market():
         ones = np.ones(len(self.assets))
         a = np.matmul(self.inv_covariance_matrix,self.expected_returns-self.rf*np.ones(len(self.expected_returns)))
         return ((mean-self.rf)**2)/(A*self.rf**2-2*B*self.rf+C) #Variance
+    
+    def plotEfficientFrontier(self):
+        '''
+        Plots the efficient frontier using the efficientFrontier function
+        '''
+        mean_axis = np.linspace(self.rf, self.rf+100,num=100)
+        for mean in mean_axis:
+            plt.scatter(efficientFrontier(mean), mean)
+        plt.show()
+        
