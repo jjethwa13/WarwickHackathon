@@ -5,20 +5,27 @@ class Market():
         Market.efficient_frontier
         Market.covariance_matrix = np.diag(np.ones(len(self.assets)))
         Market.riskless_asset
+        Market.expected_returns = [asset.getExpectation() for asset in assets]    
 
-    '''Getters'''
+    '''
+    Getters
+    '''
     def get_assets(self):
         return self.assets
 
     def getCovarianceMatrix(self):
         return self.getCovarianceMatrix
 
-    '''Create riskless asset'''
+    '''
+    Create riskless asset
+    '''
     def createRisklessAsset(self):
         self.riskless_asset = Asset(rf=0.5)
         return self.riskless_asset
 
-    '''Creates covariance matrix for the assets in the market'''
+    '''
+    Creates covariance matrix for the assets in the market
+    '''
     def setCovarianceMatrix(self):
         
         def makeSymmetric(arr):
