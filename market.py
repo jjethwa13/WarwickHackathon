@@ -20,6 +20,7 @@ class Market():
 
     '''Creates covariance matrix for the assets in the market'''
     def setCovarianceMatrix(self):
+        
         def makeSymmetric(arr):
             return arr + arr.T - np.diag(arr.diagonal())
 
@@ -27,3 +28,5 @@ class Market():
             for j in range(i):
                 self.covariance[j][i]=self.assets[i].getCovariance(self.assets[j])
         return self.covariance_matrix
+
+        
