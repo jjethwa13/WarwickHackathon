@@ -1,6 +1,10 @@
-class market(object):
+class Market(object):
     def __init__(self, assets):
-        market.assets = assets
+        Market.assets = assets
+        Market.efficient_frontier
         
-    def get_assets(self):
-        return market.assets
+    '''Getters'''
+    def getAssets(self):
+        return Market.assets
+    def getCovarianceMatrix(self):
+        return
