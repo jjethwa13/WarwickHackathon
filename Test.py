@@ -14,24 +14,6 @@ X.setDistribution(TestDist)
 Y = Asset.Asset()
 Y.setDistribution(TestDist)
 
-S = Market.Market([X,Y], 0.01)
-
+S = Market.Market([X,Y], 21)
 print(S.getCovarianceMatrix())
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+S.plotEfficientFrontier(riskless_included=True)

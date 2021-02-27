@@ -19,6 +19,9 @@ class Market():
         self.expected_returns = [asset.getExpectation() for asset in assets]
         self.rf = rf
         self.createRisklessAsset()
+        self.A=None
+        self.B=None
+        self.C=None
 
     '''
     Getters
@@ -89,21 +92,36 @@ class Market():
             self.C = np.matmul(self.expected_returns,np.matmul(self.inv_covariance_matrix,self.expected_returns))
         return 0
 
-    def efficientFrontier(self,mean):
+    def efficientFrontier(self,mean, riskless_included = False):
         '''
         Takes mean as argument and returns variance
         '''
-        calcConstants()
+        self.calcConstants()
         ones = np.ones(len(self.assets))
-        a = np.matmul(self.inv_covariance_matrix,self.expected_returns-self.rf*np.ones(len(self.expected_returns)))
-        return ((mean-self.rf)**2)/(A*self.rf**2-2*B*self.rf+C) #Variance
+        #a = np.matmul(self.inv_covariance_matrix,self.expected_returns-self.rf*np.ones(len(self.expected_returns)))
+        if riskless_included:
+            return ((mean-self.rf)**2)/(self.A*self.rf**2-2*self.B*self.rf+self.C) #Variance
+        else:
+            return (self.A*mean**2-2*self.B*mean+self.C)/(self.A*self.C-self.B**2) 
     
-    def plotEfficientFrontier(self):
+    def plotEfficientFrontier(self, riskless_included=False):
         '''
         Plots the efficient frontier using the efficientFrontier function
         '''
-        mean_axis = np.linspace(self.rf, self.rf+100,num=100)
-        for mean in mean_axis:
-            plt.scatter(self.efficientFrontier(mean), mean)
-        plt.show()
+        self.calcConstants()
+        if riskless_included:
+            mean_axis = np.linspace(self.rf, self.rf+1,num=100)
+            zero = self.efficientFrontier(self.rf)
+            for mean in mean_axis:
+                frontier = self.efficientFrontier(mean, riskless_included=riskless_included)
+                plt.scatter(frontier, mean)
+                plt.scatter(frontier, self.rf-(mean-self.rf))
+            plt.show()
+        else:
+            mean_axis = np.linspace(self.B/self.A, (self.B/self.A)+1,num=100)
+            for mean in mean_axis:
+                frontier = self.efficientFrontier(mean, riskless_included=riskless_included)
+                plt.scatter(frontier,- mean)
+                plt.scatter(frontier,- (self.B/self.A-(mean-self.B/self.A)))
+            plt.show()
         
