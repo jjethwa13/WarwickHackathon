@@ -23,7 +23,7 @@ class Asset(object):
         self.setDistribution(lambda x: int(x >= rf))
         self.price = price
         self.properties = {}
-        self.accuracy = 0.01
+        self.accuracy = 0.0001
         
     '''
     Getters
@@ -184,21 +184,21 @@ class Asset(object):
         return (result / (n-1))
         
         
-from scipy.stats import norm
-
-    
-def Test(x):
-    return norm.cdf(x)
-    
-
-import matplotlib.pyplot as plt
-
-X = Asset()
-X.setDistribution(Test)
-
-
-print(X.getExpectation())
-print(X.getStd())
+#from scipy.stats import norm
+#
+#    
+#def Test(x):
+#    return norm.cdf(x)
+#    
+#
+#import matplotlib.pyplot as plt
+#
+#X = Asset()
+#X.setDistribution(Test)
+#
+#
+#print(X.getExpectation())
+#print(X.getStd())
 
 #data = X.simulate(n=10000)
 #plt.figure(figsize=(20, 10))

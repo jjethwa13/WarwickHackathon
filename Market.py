@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import Asset
+from Asset import *
 
 class Market():
     def __init__(self, assets, rf):
@@ -10,17 +10,15 @@ class Market():
             rf : float (Denotes the risk-free rate for the riskless asset)
         '''
         self.assets = assets
-        self.efficient_frontier
+        
 
         self.covariance_matrix = np.diag(np.ones(len(self.assets)))
-        setCovarianceMatrix()
-        self.inv_covariance_matrix
-        setInvCovarianceMatrix()
-
-        self.riskless_asset
+        self.setCovarianceMatrix()
+        self.setInvCovarianceMatrix()
+        
         self.expected_returns = [asset.getExpectation() for asset in assets]
-        self.tangency_portfolio
         self.rf = rf
+        self.createRisklessAsset()
 
     '''
     Getters
@@ -49,7 +47,9 @@ class Market():
 
         for i in range(len(self.assets)):
             for j in range(i):
-                self.covariance[j][i]=self.assets[i].getCovar(self.assets[j])
+                self.covariance_matrix[j][i] = self.assets[i].getCovar(self.assets[j])
+        
+        self.covariance_matrix = makeSymmetric(self.covariance_matrix)
         return self.covariance_matrix
     
     def setInvCovarianceMatrix(self):
@@ -104,6 +104,6 @@ class Market():
         '''
         mean_axis = np.linspace(self.rf, self.rf+100,num=100)
         for mean in mean_axis:
-            plt.scatter(efficientFrontier(mean), mean)
+            plt.scatter(self.efficientFrontier(mean), mean)
         plt.show()
         
