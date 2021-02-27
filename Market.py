@@ -72,7 +72,7 @@ class Market():
         '''
         Calculates the Markowitz tangency portfolio
         '''
-        calcConstants()
+        self.calcConstants()
         ones = np.ones(len(self.assets))
         a = np.matmul(self.inv_covariance_matrix,self.expected_returns-self.rf*np.ones(len(self.expected_returns)))
         self.tangency_portfolio = a/(self.B-self.rf*self.A)
