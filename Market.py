@@ -1,6 +1,11 @@
 import numpy as np
 class Market():
     def __init__(self, assets, rf):
+        '''
+        Parameters :
+            assets : list (List of asset objects defined in Asset.py)
+            rf : float (Denotes the risk-free rate for the riskless asset)
+        '''
         self.assets = assets
         self.efficient_frontier
 
@@ -23,11 +28,12 @@ class Market():
     def getCovarianceMatrix(self):
         return self.getCovarianceMatrix
 
-    '''
-    Create riskless asset
-    '''
+    
     def createRisklessAsset(self):
-        self.riskless_asset = Asset(rf=0.5)
+        '''
+        Creates riskless asset using the risk free rate
+        '''
+        self.riskless_asset = Asset(rf=self.rf)
         return self.riskless_asset
 
     '''
@@ -43,24 +49,40 @@ class Market():
         return self.covariance_matrix
     
     def setInvCovarianceMatrix(self):
-        return self.inv_covariance_matrix = np.linalg.inv(self.covariance_matrix)
+        self.inv_covariance_matrix = np.linalg.inv(self.covariance_matrix)
+        return self.inv_covariance_matrix
 
     def minVariancePortfolio(self, mean):
         '''
         Calculates the minimum variance portfolio
         '''
         a = self.expected_returns-self.rf*np.ones(len(self.expected_returns))
-        b = np.matmul(inv_covariance_matrix,a)
+        b = np.matmul(self.inv_covariance_matrix,a)
         min_variance_portfolio = ((mean-self.rf)*b)/np.matmul(a,b)
         return min_variance_portfolio
 
     def tangencyPortfolio(self):
         '''
-        Calculates the markowitz tangency porfolio
+        Calculates the Markowitz tangency portfolio
         '''
-        ones = np.ones(len(self.assets))
-        A = np.matmul(ones,np.matmul(self.inv_covariance_portfolio,ones))
-        B = np.matmul(ones,np.matmul(self.inv_covariance_portfolio,self.expected_returns))
-        a = np.matmul(inv_covariance_matrix,self.expected_returns-self.rf*np.ones(len(self.expected_returns)))
-        self.tangency_portfolio = a/(B-r*A)
+        calcConstants()
+        
+        a = np.matmul(self.inv_covariance_matrix,self.expected_returns-self.rf*np.ones(len(self.expected_returns)))
+        self.tangency_portfolio = a/(self.B-self.rf*self.A)
         return self.tangency_portfolio
+    
+    def calcConstants(self):
+        if (self.A==None):
+            ones = np.ones(len(self.assets))
+            self.A = np.matmul(ones,np.matmul(self.inv_covariance_matrix,ones))
+        if (self.B == None):
+            ones = np.ones(len(self.assets))
+            self.B = np.matmul(ones,np.matmul(self.inv_covariance_matrix,self.expected_returns))
+        return 0
+
+    def efficientFrontier(self,mean):
+        '''
+        Takes mean as argument and returns Variance
+        '''
+        calcConstants()
+        variance = (mean-self.rf)**2/()
